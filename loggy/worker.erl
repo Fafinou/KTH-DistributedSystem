@@ -1,5 +1,5 @@
 -module(worker).
--export([start/5, stop/1]).
+-export([start/5, stop/1, max/2]).
 
 start(Name, Logger, Seed, Sleep, Jitter) ->
 	spawn(fun() -> init(Name, Logger, Seed, Sleep, Jitter) end).
@@ -29,9 +29,9 @@ loop(Name, Log, Peers, Sleep, Jitter, Clock)->
 	Wait = random:uniform(Sleep),
 	receive
 		{msg, Time, Msg} ->
-			Clock = max(Time, Clock) + 1,
-			Log ! {log, Name, Clock, {received, Msg}},
-			loop(Name, Log, Peers, Sleep, Jitter, Clock);
+			ClockNew = worker:max(Time, Clock) + 1,
+			Log ! {log, Name, ClockNew, {received, Msg}},
+			loop(Name, Log, Peers, Sleep, Jitter, ClockNew);
 		stop ->
 			ok;
 		Error ->
@@ -42,7 +42,6 @@ loop(Name, Log, Peers, Sleep, Jitter, Clock)->
 			Message = {hello, random:uniform(100)},
 			Selected ! {msg, Time, Message},
 			jitter(Jitter),
-			Time = Clock + 1,
 			Log ! {log, Name, Time, {sending, Message}},
 			loop(Name, Log, Peers, Sleep, Jitter, Time)
 	end.
