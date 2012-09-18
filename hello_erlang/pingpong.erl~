@@ -1,0 +1,18 @@
+-module(pingpong).
+-export([ping/0, pong/0,start/0]).
+ping() -> 
+    receive
+	{pid, X} -> io:format("ping~n"),
+		   X ! {pid, self()},
+		   ping()
+    end.
+pong() ->
+    receive
+	{pid, X} -> io:format("pong ~n"),
+		    X ! {pid, self()},
+		    pong()
+    end.
+start()->   
+    Ping_PID=spawn(pingpong,ping,[]),
+    Pong_PID=spawn(pingpong,pong,[]),
+    Pong_PID ! {pid,Ping_PID}.

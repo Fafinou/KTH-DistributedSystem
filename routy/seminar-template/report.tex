@@ -1,0 +1,103 @@
+% Very simple template for lab reports. Most common packages are already included.
+\documentclass[a4paper, 11pt]{article}
+\usepackage[utf8]{inputenc} % Change according your file encoding
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{fourier}
+\usepackage{listings}
+\lstset{
+  morekeywords={abort,abs,accept,access,all,and,array,at,begin,body,
+      case,constant,declare,delay,delta,digits,do,else,elsif,end,entry,
+      exception,exit,for,function,generic,goto,if,in,is,limited,loop,
+      mod,new,not,null,of,or,others,out,package,pragma,private,
+      procedure,raise,range,record,rem,renames,return,reverse,select,
+      separate,subtype,task,terminate,then,type,use,when,while,with,
+      xor,abstract,aliased,protected,requeue,tagged,until,public,static,void},
+  sensitive=f,
+  morecomment=[l]\#,
+  morestring=[d]",
+  showstringspaces=false,
+  basicstyle=\small\ttfamily,
+  keywordstyle=\bf\small,
+  commentstyle=\itshape,
+  stringstyle=\sf,
+  extendedchars=true,
+  columns=[c]fixed,
+  numbers = left,
+  numberstyle=\tiny,
+  stepnumber=2,
+  numbersep=5pt,
+  framexleftmargin=5mm,
+  language=R,
+  frame=shadowbox
+}
+
+% CI-DESSOUS: conversion des caractères accentués UTF-8 
+% en caractères TeX dans les listings...
+\lstset{
+  literate=%
+  {À}{{\`A}}1 {Â}{{\^A}}1 {Ç}{{\c{C}}}1%
+  {à}{{\`a}}1 {â}{{\^a}}1 {ç}{{\c{c}}}1%
+  {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {Ë}{{\"E}}1% 
+  {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1%
+  {Ï}{{\"I}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1%
+  {ï}{{\"i}}1 {î}{{\^i}}1 {ô}{{\^o}}1%
+  {Ù}{{\`U}}1 {Û}{{\^U}}1 {Ü}{{\"U}}1%
+  {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1%
+}
+%opening
+\title{Report 2: Routy, a small routing protocol}
+\author{Simon Cathébras}
+\date{\today{}}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+
+During this assignment, we developed a router in Erlang. Routers are used in interconnecting several networks. Thus, routers are part of one very common distributed system: the Internet.\\
+
+For this seminar an implementation of dijkstra has been realised. To do so, \lstinline!lists! API from Erlang has been used. \\
+
+In addition, if the \lstinline!routy.erl! file is excepted, all required modules have been implemented without using the skeleton from last year. Thus, we could learn a lot about Erlang programming. We will discuss about this later, in the second section of this document.\\
+
+Basically, the Dijkstra's algorithm is used to build the routing table. This table is then used to choose the best route a given packet has to take to reach a given destination. Basically, the map is seen as a graph which Nodes are routers and edges are the link between nodes. In this model, each edge has the weight $1$. To be noted that, we could give dynamic weight to the edges, depending on the occupation of the link (the more the link is occupied, the higher is the weight). This way, the Dijkstra's algorithm computes the shortest way in this graph to reach a given node.\\
+
+Finally, after implementing the whole router given in the paper, here is a small test showing how it works.\\
+
+\newpage
+
+\begin{enumerate}
+\item In the same country (Erlang machine) Sweden, create three routers:
+Lund, Stockholm and Goteborg.
+\item The map is the following:\\ 
+\lstinline!{{lund, [stockholm]},{stockholm, [lund, goteborg]}, {goteborg, [stockholm]}}!.
+\item Send a message from Goteborg to Lund. The only way to reach Lund is to go threw Stockholm.
+\end{enumerate}
+
+Let's see what happened now, after all nodes have been created and the map initialized.\\
+
+\begin{lstlisting}
+(sweden@127.0.0.1)21> goteborg ! {send, lund, "hello"}.                         goteborg: routing message ([104,101,108,108,111]) 
+{send,lund,"hello"}
+stockholm: routing message ([104,101,108,108,111]) 
+lund: received message [104,101,108,108,111] from goteborg 
+\end{lstlisting}
+
+This is, fortunately, the result we were expecting.
+
+\section{Main problems and solutions}
+
+\paragraph{Coding in Erlang}
+During this assignment, we encountered some problems during Dijkstra's implementation, especially when we implemented the \lstinline!iterate! function. Our first way to do it was writing a big \lstinline!case! inside the function. It was not especially readable, nor efficient. We swept to a more common, in an Erlang way, implementation, where we are matching the different case directly in the parameters of the function.
+ 
+
+
+
+\section{Conclusions}
+
+During this seminar, we actually implemented for the first time a Dijkstra Algorithm in a concrete problem. During this implementation, we have also discovered the existence of an useful API in Erlang for lists manipulation.
+
+\end{document}

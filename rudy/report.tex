@@ -1,0 +1,139 @@
+\documentclass[11pt]{article}
+
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fourier}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{dsfont}
+\usepackage{placeins}
+\usepackage{subfigure}
+\usepackage{graphicx}
+% des commandes utiles pour ecrire des maths
+\newcommand{\dx}{\,dx}
+\newcommand{\dt}{\,dt}
+\newcommand{\ito}{,\dotsc,}
+\newcommand{\R}{\mathds{R}}
+\newcommand{\N}{\mathds{N}}
+\newcommand{\Poly}[1]{\mathcal{P}_{#1}}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\pars}[1]{\left(#1\right)}
+\newcommand{\bigpars}[1]{\bigl(#1\bigr)}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newenvironment{Reponse}[1]{
+\par
+\setlength\fboxrule{2pt}%
+\begin{minipage}{.95\linewidth}
+\fbox{\parbox[c]{.972\linewidth}{\textbf{Propriété} \\ \medskip  #1}} 
+\end{minipage}
+}
+
+\newenvironment{Reponse2}[1]{%
+    %\vspace{3pt}
+    \par
+  \begin{minipage}{.95\linewidth}
+    %\vspace{12pt}\par
+    \xdef\@formanswerline{\@questionheader}%
+    \xdef\@maskanswerline{\@questionheader}%
+    \fbox{\parbox[c]{.972\linewidth}{\textbf{Q\thequestion} : #1}}
+    \vspace\questionspace\par
+    %{\@answerstitlefont\@answerstitle}
+    \vspace{-2ex}
+    \begin{multicols}{5}
+    \begin{list}{\@answernumberfont\Alph{@choice}.~}
+    	{\addtolength{\leftmargin}{-3pt}%
+    	%\setlength{\labelsep}{-1pt}
+    	\usecounter{@choice}}}{%
+    \end{list}
+    \end{multicols}
+    \@initorcheck%
+    \addtocontents{frm}{\@formanswerline\protect\\\protect\hline}%
+    \addtocontents{msk}{\@maskanswerline\protect\\\protect\hline}%
+  \end{minipage}
+  }
+
+%%%%%%
+% Pour mise-en-forme des fichiers Ada
+%
+% voir exemple en fin de ce fichier.
+%
+% ATTENTION, requiert encoding utf-8 (voir 2ième "\lstset" ci-dessous)
+ 
+\usepackage{listings}
+\lstset{
+  morekeywords={abort,abs,accept,access,all,and,array,at,begin,body,
+      case,constant,declare,delay,delta,digits,do,else,elsif,end,entry,
+      exception,exit,for,function,generic,goto,if,in,is,limited,loop,
+      mod,new,not,null,of,or,others,out,package,pragma,private,
+      procedure,raise,range,record,rem,renames,return,reverse,select,
+      separate,subtype,task,terminate,then,type,use,when,while,with,
+      xor,abstract,aliased,protected,requeue,tagged,until,public,static,void},
+  sensitive=f,
+  morecomment=[l]\#,
+  morestring=[d]",
+  showstringspaces=false,
+  basicstyle=\small\ttfamily,
+  keywordstyle=\bf\small,
+  commentstyle=\itshape,
+  stringstyle=\sf,
+  extendedchars=true,
+  columns=[c]fixed,
+  numbers = left,
+  numberstyle=\tiny,
+  stepnumber=2,
+  numbersep=5pt,
+  framexleftmargin=5mm,
+  language=R,
+  frame=shadowbox
+}
+
+% CI-DESSOUS: conversion des caractères accentués UTF-8 
+% en caractères TeX dans les listings...
+\lstset{
+  literate=%
+  {À}{{\`A}}1 {Â}{{\^A}}1 {Ç}{{\c{C}}}1%
+  {à}{{\`a}}1 {â}{{\^a}}1 {ç}{{\c{c}}}1%
+  {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {Ë}{{\"E}}1% 
+  {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1%
+  {Ï}{{\"I}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1%
+  {ï}{{\"i}}1 {î}{{\^i}}1 {ô}{{\^o}}1%
+  {Ù}{{\`U}}1 {Û}{{\^U}}1 {Ü}{{\"U}}1%
+  {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1%
+}
+
+%%%%%%%%%%
+% TAILLE DES PAGES (A4 serré)
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1ex}
+\setlength{\textwidth}{17cm}
+\setlength{\textheight}{23cm}
+\setlength{\oddsidemargin}{-.7cm}
+\setlength{\evensidemargin}{-.7cm}
+\setlength{\topmargin}{-.5in}
+
+%%%%%%%%%%
+% EN-TÊTES ET PIED DE PAGES
+
+\pagestyle{fancyplain}
+\renewcommand{\headrulewidth}{0pt}
+\addtolength{\headheight}{1.6pt}
+\addtolength{\headheight}{2.6pt}
+\lfoot{}
+\cfoot{}
+\rfoot{\footnotesize\sf page~\thepage/\pageref{LastPage}}
+\lhead{\footnotesize\sf ID2201}
+\rhead{\footnotesize\sf Rudy} % numéro d'équipe Teide 
+
+% titre, auteur et date
+\title{Distributed systems\\
+HTTP Server: Rudy.
+%\include{kth_rgb}
+}
+%% penser à indiquer: numéro d'équipe Teide + noms + groupe TD
+\author{Simon Cathébras}
+\date{\today}
+\begin{document}
+
+\end{document}
