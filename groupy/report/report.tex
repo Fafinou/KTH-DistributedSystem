@@ -1,0 +1,87 @@
+% Very simple template for lab reports. Most common packages are already included.
+\documentclass[a4paper, 11pt]{article}
+\usepackage[utf8]{inputenc} % Change according your file encoding
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{fourier}
+\usepackage{listings}
+\lstset{
+  morekeywords={abort,abs,accept,access,all,and,array,at,begin,body,
+      case,constant,declare,delay,delta,digits,do,else,elsif,end,entry,
+      exception,exit,for,function,generic,goto,if,in,is,limited,loop,
+      mod,new,not,null,of,or,others,out,package,pragma,private,
+      procedure,raise,range,record,rem,renames,return,reverse,select,
+      separate,subtype,task,terminate,then,type,use,when,while,with,
+      xor,abstract,aliased,protected,requeue,tagged,until,public,static,void},
+  sensitive=f,
+  morecomment=[l]\#,
+  morestring=[d]",
+  showstringspaces=false,
+  basicstyle=\small\ttfamily,
+  keywordstyle=\bf\small,
+  commentstyle=\itshape,
+  stringstyle=\sf,
+  extendedchars=true,
+  columns=[c]fixed,
+  numbers = left,
+  numberstyle=\tiny,
+  stepnumber=2,
+  numbersep=5pt,
+  framexleftmargin=5mm,
+  language=R,
+  frame=shadowbox
+}
+
+% CI-DESSOUS: conversion des caractères accentués UTF-8 
+% en caractères TeX dans les listings...
+\lstset{
+  literate=%
+  {À}{{\`A}}1 {Â}{{\^A}}1 {Ç}{{\c{C}}}1%
+  {à}{{\`a}}1 {â}{{\^a}}1 {ç}{{\c{c}}}1%
+  {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {Ë}{{\"E}}1% 
+  {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1%
+  {Ï}{{\"I}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1%
+  {ï}{{\"i}}1 {î}{{\^i}}1 {ô}{{\^o}}1%
+  {Ù}{{\`U}}1 {Û}{{\^U}}1 {Ü}{{\"U}}1%
+  {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1%
+}
+%opening
+\title{\includegraphics[scale=1]{kth_rgb.jpg}\\
+Report 4: Groupy Group membership service}
+\author{Simon Cathébras}
+\date{\today{}}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+During this assignment we have implemented a group membership service. This particular device stands for an important problematic in distributed systems: Failure handling.\\
+We could easily realise that implementing such a mechanism is kind of complex. 
+\subsection{Context}
+All distributed systems are actually very dependant of the failure handling. As a matter of fact, this failure handling must be a transparency one for users. It means that the application must (in most of cases) continue running even if a node crashes.\\
+For example can we take a cluster of server. If one server goes down, the cluster must continue to run.
+\subsection{What have been realised}
+What we realised so far in the development was the failure handling mechanism part. To do so, we have implemented first a basic disconnection handling mechanism: when the leader is disconnected, another leader is elected.\\
+The thing is, if we now add a random "crash" of the leader node, several messages may not be fully transmitted to all of the slaves nodes. In order to do so, we add to implement a message identification (basically, each message now have a message number). This message identification is used in order to be able to re-send messages, and eventually discard the wrong ones.\\
+For now, we can successfully create groups and add some extra nodes to those groups. If a slave node crashes, the system is still running. And if the leader crashes, a new leader is successfully elected.
+
+\section{Main problems and solutions}
+\subsection{Missing messages}
+When a leader crashes, a particular problem occurs. The leader can crash in the middle of a broadcast. Thus, it leads to de synchronisation of all nodes. The thing is, several nodes are receiving the message, and others don't. This means that the the next leader will certainly receive it, but the others won't.\\
+This has been fixed with the following: The new leader automatically send first the last message it received, and then the others are checking each message they are receiving and discard message they have already received.  
+
+\subsection{Message identification}
+Managing the identification of messages was a tricky part of this assignment. According to instructions:
+\begin{itemize}
+\item Slave: N in parameter stands for the next message the node expects to receive.
+\item Leader: The next message to send.
+\end{itemize}
+We could not easily decide when we were supposed to change the value. So we found a solution working with the following.\\
+\paragraph{Slave} When \lstinline!msg! or \lstinline!view! is received, we match the message value with \lstinline!N!, and we expect the next message to arrive is \lstinline!N+1!
+\paragraph{Leader}We send the next message with the stamp of \lstinline!N! and we loop with \lstinline!N+1!
+\paragraph{Election} For the new leader, we send the last message, we send the new broadcast with the message id \lstinline!N! and we call leader with \lstinline!N+1!.
+For the slave, we wait for the message \lstinline!N!.
+
+\section{Conclusion}
+During this assignment, we discovered one way amongst others to solve the failure handling problem. But, our implementation still doesn't work very well. As a matter of fact, there are some troubles for example with the management of message ID. what if the counter explodes for example ?
+
+\end{document}
